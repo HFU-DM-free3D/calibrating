@@ -8,6 +8,7 @@ This project centers on calibrating three Kinect cameras for Free3D, employing A
 |-------------|-----------|
 | Python      | 3.11      |
 | OpenCV      | 4.8.1     |
+| matplotlib      | 3.8.2     |
 
 ### Tested on
 - Windows 11
