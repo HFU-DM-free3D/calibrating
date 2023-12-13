@@ -49,16 +49,17 @@ import numpy as np
 import json
 import os
 
-import matplotlib
-
 detectedMarkerIDs = []
 allPositions = []
 
-#inputVideo = cv2.VideoCapture("E:/Studium/Master/Semester_1/ForschProj/testVids/t2711/sub2.mkv")
-#inputVideo = cv2.VideoCapture("C:/Users/Lukas/OneDrive/Desktop/testVids2711/output-4.mkv")
+# Add the fitting video Path with the videos with the markers
+# Add the fitting json Path from the video (you can extract the json from the video with the command: ffmpeg -dump_attachment:3 calibration2.json -i output-4.mkv)
 inputVideo = cv2.VideoCapture("E:/Studium/Master/Semester_1/ForschProj/testVids/t0412/size20.mkv")
-#inputVideo = cv2.VideoCapture("E:/Studium/Master/Semester_1/ForschProj/testVids/t0412/depth6cm/depth.mp4")
 json_file_path = "E:/Studium/Master/Semester_1/ForschProj/testVids/t0412/size20.json"
+
+# update the Marker Size in Meter. To compute the correkt Position you need to tell the right size of the Marker. If you set this to small the distance will be longer than in reality
+# if its too big the measured Distance will be shorter than in reality
+markerLength = 0.20
 
 if os.path.exists(json_file_path):
     with open(json_file_path, "r") as json_file:
@@ -70,14 +71,6 @@ if os.path.exists(json_file_path):
     distortion = np.array(camera_parameters[9:])
     print(intrinsic_camera)
     print(distortion)
-
-
-# Read Params
-cameraMatrix = np.zeros((3, 3), dtype=np.float32)
-distCoeffs = np.zeros((5, 1), dtype=np.float32)
-
-# Markerwidth
-markerLength = 0.20
 
 # Koordsystem
 objPoints = np.zeros((4, 1, 3), dtype=np.float32)
@@ -105,7 +98,7 @@ while inputVideo.isOpened():
     if ids is None or len(ids) == 0:
         detectedMarkerIDs.clear()
 
-    # if one Marcer is tracked
+    # if one Marker is tracked
     if ids is not None and len(ids) > 0:
         aruco.drawDetectedMarkers(imageCopy, corners)
         nMarkers = len(corners)
@@ -122,24 +115,18 @@ while inputVideo.isOpened():
                     detectedMarkerIDs.append(id)
                     print(str(detectedMarkerIDs[-1]), ": ", str(tvec))
                     if id == 99: allPositions.append(tvec)
-            
 
-        # # Draw axis (doesnt work somehow)
-        # for i in range(len(ids)):
-        #     aruco.drawFrameAxes(imageCopy, cameraMatrix, distCoeffs, rvecs[i], tvecs[i], 0.1)
-
-    # Ergebnisbild anzeigen und Fenster schließen
+    # Show Video in window
     cv2.imshow("out", imageCopy)
 
     key = cv2.waitKey(1) & 0xFF
-    # if key == ord("p"):
-    #     print(tvecs)
     if key == ord("q"):
         break
 
 inputVideo.release()
 cv2.destroyAllWindows()
 
+#Visualises the tracked Marker Positions in an Plot
 viewer = Viewer()
 for pos in allPositions:
     viewer.add_point(pos)
