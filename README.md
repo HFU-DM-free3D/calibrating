@@ -1,3 +1,12 @@
+# How to start the Repo
+1. Clone the repo
+2. Create a venv ( python -m venv venv)
+3. Check Restrictions (on Windows --> cmd or powershell: Get-ExecutionPolicy). If they are restricted you have to unrestrict them (cmd: Set-ExecutionPolicy Unrestricted -Scope Process)
+4. Activate venv (cmd: venv/Scripts/activate)
+5. install numpy (cmd: pip install numpy)
+6. install opencv (cmd: pip install opencv-contrib-python)
+7. install matplotlib (cmd: pip install matplotlib)
+
 # calibrating
 This project centers on calibrating three Kinect cameras for Free3D, employing Aruco markers. This calibration ensures precise alignment, vital for accurate 3D reconstructions, enhancing overall project quality and effectiveness.
 
