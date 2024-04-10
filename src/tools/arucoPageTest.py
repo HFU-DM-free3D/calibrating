@@ -2,6 +2,8 @@
 # Added some parts to create a border - may create problems now if you want to create more than one marker on one page (12.12.23 lw)
 # command to create a marker: arucoPageTest.py -o ./arucoMarkers/aruco_435_border_15cm.png -i 435 -x 1 -y 1 -s 150 --no-write-id 
 
+# This Script Creates a A4 Page with an Aruco Marker
+
 import argparse
 import cv2
 import sys

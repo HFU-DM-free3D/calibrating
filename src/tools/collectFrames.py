@@ -1,4 +1,5 @@
 #This is not Ready for Use (12.12.23 lw)
+#This could be a script for extracting the calibration.json by itself
 
 import subprocess
 import json
@@ -30,7 +31,7 @@ def readVideo(filename):
 
 if __name__ == "__main__":
     # Replace 'your_video_file.mkv' with the actual path to your video file
-    input_video_path = 'E:/Studium/Master/Semester_1/ForschProj/testVids/output-2.mkv'
+    input_video_path = ''
 
     # Iterate over frames from color and depth streams
     for frames in readVideo(input_video_path):
