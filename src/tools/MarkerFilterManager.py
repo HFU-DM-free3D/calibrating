@@ -88,7 +88,9 @@ class MarkerFilterManager:
         }
 
         for key, markerArray in sorted_Markers.items():  # Durch Schlüssel-Wert-Paare des Dictionaries iterieren
+            print("Amount Trackings in array id ", key, ": ", len(markerArray))
             markerArray = self.filteredMarkers(markerArray)
+            print("Amount Trackings in filtered \array id ", key, ": ", len(markerArray))
             self.safeAllDependetCamValues(markerArray)
         
         count_tracked_markers = self.countAmountMarkersWhereTracked(sorted_Markers)
@@ -105,18 +107,18 @@ class MarkerFilterManager:
             self.candidate_dist_22_435_22, self.candidate_dist_22_435_435 = self.giveShortestDistanceFromTwoMarkerArrays(sorted_Markers["id_22_markers"], sorted_Markers["id_435_markers"])
             self.candidate_dist_30_435_30, self.candidate_dist_30_435_435 = self.giveShortestDistanceFromTwoMarkerArrays(sorted_Markers["id_30_markers"], sorted_Markers["id_435_markers"])
 
-            #print("candidate 1-15-1:", self.candidate_1_15_1.translation, "candidate 1-15-15:", self.candidate_1_15_15.translation)
-            #print("candidate 1-22-1:", self.candidate_dist_1_22_1.translation, "candidate 1-22-22:", self.candidate_dist_1_22_22.translation)
-            #print("candidate 1-30-1:", self.candidate_dist_1_30_1.translation, "candidate 1-30-30:", self.candidate_dist_1_30_30.translation)
-            #print("candidate 1-435-1:", self.candidate_dist_1_435_1.translation, "candidate 1-435-435:", self.candidate_dist_1_435_435.translation)
-            #print("candidate 15-22-15:", self.candidate_dist_15_22_15.translation, "candidate 15-22-22:", self.candidate_dist_15_22_22.translation)
-            #print("candidate 15-30-15:", self.candidate_dist_15_30_15.translation, "candidate 15-30-30:", self.candidate_dist_15_30_30.translation)
-            #print("candidate 15-435-15:", self.candidate_dist_15_435_15.translation, "candidate 15-435-435:", self.candidate_dist_15_435_435.translation)
-            #print("candidate 22-30-22:", self.candidate_dist_22_30_22.translation, "candidate 22-30-30:", self.candidate_dist_22_30_30.translation)
-            #print("candidate 22-435-22:", self.candidate_dist_22_435_22.translation, "candidate 22-435-435:", self.candidate_dist_22_435_435.translation)
-            #print("candidate 30-435-30:", self.candidate_dist_30_435_30.translation, "candidate 30-435-435:", self.candidate_dist_30_435_435.translation)
-            #
-            #print("candidate 22-435-22 trans: ", self.candidate_dist_22_435_22.depCamInCubeTrans, "\nrot: ", self.candidate_dist_22_435_22.depCamInCubeRot)
+            print("candidate 1-15-1:", self.candidate_1_15_1.translation, "candidate 1-15-15:", self.candidate_1_15_15.translation)
+            print("candidate 1-22-1:", self.candidate_dist_1_22_1.translation, "candidate 1-22-22:", self.candidate_dist_1_22_22.translation)
+            print("candidate 1-30-1:", self.candidate_dist_1_30_1.translation, "candidate 1-30-30:", self.candidate_dist_1_30_30.translation)
+            print("candidate 1-435-1:", self.candidate_dist_1_435_1.translation, "candidate 1-435-435:", self.candidate_dist_1_435_435.translation)
+            print("candidate 15-22-15:", self.candidate_dist_15_22_15.translation, "candidate 15-22-22:", self.candidate_dist_15_22_22.translation)
+            print("candidate 15-30-15:", self.candidate_dist_15_30_15.translation, "candidate 15-30-30:", self.candidate_dist_15_30_30.translation)
+            print("candidate 15-435-15:", self.candidate_dist_15_435_15.translation, "candidate 15-435-435:", self.candidate_dist_15_435_435.translation)
+            print("candidate 22-30-22:", self.candidate_dist_22_30_22.translation, "candidate 22-30-30:", self.candidate_dist_22_30_30.translation)
+            print("candidate 22-435-22:", self.candidate_dist_22_435_22.translation, "candidate 22-435-435:", self.candidate_dist_22_435_435.translation)
+            print("candidate 30-435-30:", self.candidate_dist_30_435_30.translation, "candidate 30-435-435:", self.candidate_dist_30_435_435.translation)
+            
+            print("candidate 22-435-30 trans: ", self.candidate_dist_30_435_30.depCamInCubeTrans, "\nrot: ", self.candidate_dist_30_435_30.depCamInCubeRot)
         else:
             for key, markerArray in sorted_Markers.items():
                 if markerArray != []:
