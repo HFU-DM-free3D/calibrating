@@ -32,18 +32,18 @@ for fname in images:
     cv.imshow('img', img)
     cv.waitKey(500)
 
-ret, mtx, dist, rvecs, tvecs = cv.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
-print(mtx)
-print(dist)
-img = cv.imread('./Assets/screenshot0.jpg')
-h, w = img.shape[:2]
-newcameramtx, roi = cv.getOptimalNewCameraMatrix(mtx, dist, (w,h), 1, (w,h))
+    ret, mtx, dist, rvecs, tvecs = cv.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
+    print(mtx)
+    print(dist)
+    img = cv.imread('./Assets/screenshot0.jpg')
+    h, w = img.shape[:2]
+    newcameramtx, roi = cv.getOptimalNewCameraMatrix(mtx, dist, (w,h), 1, (w,h))
 
-# undistort
-dst = cv.undistort(img, mtx, dist, None, newcameramtx)
-# crop the image
-x, y, w, h = roi
-dst = dst[y:y+h, x:x+w]
-cv.imwrite('./Assets/screenshot0_cal.jpg', dst)
+    # undistort
+    dst = cv.undistort(img, mtx, dist, None, newcameramtx)
+    # crop the image
+    x, y, w, h = roi
+    dst = dst[y:y+h, x:x+w]
+    cv.imwrite('./Assets/screenshot0_cal.jpg', dst)
 
 cv.destroyAllWindows()
