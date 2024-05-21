@@ -8,7 +8,11 @@ class ComKinectRecordingExtractor:
         self.path = self.ensure_trailing_backslash(self.path)
         self.sub_amount = sub_amount
         self.pic_extractor = self.ensure_trailing_backslash(kinect_pic_rec_extractor)
-        self.createImages()
+        if self.Image_Extracts_Exist():
+            print("It seems that there are already pictures. To create new ones delete the old Folders M, S1 ... first.")
+        else:
+            print("No existing rgb and depth images. New ones are generated.")
+            self.createImages()
 
     def ensure_trailing_backslash(self, path):
         if not path.endswith("\\"):
@@ -16,14 +20,14 @@ class ComKinectRecordingExtractor:
         return path
 
     def Image_Extracts_Exist(self):
-        if not os.path.isfile(self.path + "intriM.json"):
-            print("Master Camera Params .json is missing. Creating new Jsons.") 
+        if not os.path.isdir(self.path + "M\\"):
+            print("Master Picture Folder exists") 
             return False
         for sub in range(self.sub_amount):
-            if not os.path.isfile(self.path + "intriS"+ str(sub + 1) +".json"):
-                print("One Sub Camera Params .json is missing. Creating new Jsons")
+            if not os.path.isdir(self.path + "S" + str(sub + 1) + "\\"):
+                print("Sub", str(sub + 1), " exists")
                 return False
-        print("every Cam Param Json exists. Using the existing ones.")
+        print("all needed Directorys exist.")
         return True
     
     def createImages(self):

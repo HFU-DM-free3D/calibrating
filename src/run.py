@@ -14,6 +14,9 @@ def get_parsed_args():
     parser.add_argument("--marker_length", type=float, help="length of the Marker...they should be square")
     parser.add_argument("--sub_path", type=str, default="", help="Folder name of Scene")
     parser.add_argument("--kinect_pic_rec_extractor", default=".\\venv\\Lib\\site-packages\\open3d\\examples\\reconstruction_system\\sensors", type=str)
+    parser.add_argument("--icp_itteration", type=int, default=25, help="Amount of ICP Itterations for the Pointcloud Postpro")
+    parser.add_argument("--create_pcd", type=bool, default=False, help="Flag if an pcd Json of multiple Frames should be created")
+    parser.add_argument("--amount_pcd_frames", type=int, default=1, help="Amount of Frames which should be saved in pcd json. If --create_pcd is False, this is not necessary.")
     return parser.parse_args()
 
 def ensure_trailing_backslash(path):
@@ -52,5 +55,7 @@ def main():
     all_extris = get_all_extrinsic_Matrices(args.recordings_path, args.marker_length, args.amount_Subs)
     # Create rgb and Depth Images
     ComKinectRecordingExtractor(args.recordings_path, args.sub_path, args.kinect_pic_rec_extractor, args.amount_Subs)
+    #PCD creation, postpro and visualisation
+    #Open3d will visualise the pcd of whole Scene but the pcd.json will only be the person in the middle
 
 main()
