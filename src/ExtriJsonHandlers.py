@@ -10,7 +10,6 @@ class ExtriJsonCreator:
             "cam_extrinsics": all_extris
         }
         
-        #j = json.dumps(all_extris)
         file_path = path + "extris.json"
         with open(file_path, 'w') as json_file:
             json.dump(cam_extris_dict_list, json_file, indent=4)

@@ -1,10 +1,11 @@
 import argparse
+import os
 from CamParamsExtractor import CamParamsExtractor
 from ExtrinsicCalculator import ExtrinsicCalculator
 from CamExtris import CamExtris
 from ExtriJsonHandlers import ExtriJsonCreator, ExtriJsonLoader
-import os
 from ComKinectRecordingExtractor import ComKinectRecordingExtractor
+from PcdHandler import PcdHandler
 
 def get_parsed_args():
     parser = argparse.ArgumentParser(description="Code to Extract Pointclouds an Extrinsic Params of Cams.")
@@ -15,8 +16,10 @@ def get_parsed_args():
     parser.add_argument("--sub_path", type=str, default="", help="Folder name of Scene")
     parser.add_argument("--kinect_pic_rec_extractor", default=".\\venv\\Lib\\site-packages\\open3d\\examples\\reconstruction_system\\sensors", type=str)
     parser.add_argument("--icp_itteration", type=int, default=25, help="Amount of ICP Itterations for the Pointcloud Postpro")
-    parser.add_argument("--create_pcd", type=bool, default=False, help="Flag if an pcd Json of multiple Frames should be created")
-    parser.add_argument("--amount_pcd_frames", type=int, default=1, help="Amount of Frames which should be saved in pcd json. If --create_pcd is False, this is not necessary.")
+    parser.add_argument("--create_pcd_json", type=bool, default=False, help="Flag if an pcd Json of multiple Frames should be created")
+    parser.add_argument("--amount_pcd_frames", type=int, default=5, help="Amount of Frames which should be saved in pcd json. If --create_pcd is False, this is not necessary.")
+    parser.add_argument("--create_dg_init_npz", type=bool, default=False, help="If you want to create a dynamic Gaussian, you need a init pcd an you should set this to yes")
+    parser.add_argument("--pcd_just_center", type=bool, default=True, help="If the whole set should be shown or just the center")
     return parser.parse_args()
 
 def ensure_trailing_backslash(path):
@@ -57,5 +60,6 @@ def main():
     ComKinectRecordingExtractor(args.recordings_path, args.sub_path, args.kinect_pic_rec_extractor, args.amount_Subs)
     #PCD creation, postpro and visualisation
     #Open3d will visualise the pcd of whole Scene but the pcd.json will only be the person in the middle
+    PcdHandler(args.amount_pcd_frames, args.amount_Subs, args.icp_itteration, args.pcd_just_center, args.recordings_path, args.sub_path, all_extris, args.create_pcd_json)
 
 main()
