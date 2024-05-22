@@ -32,14 +32,14 @@ This repository is created in conjunction with the Free3D project at the Faculty
 The structure of the MKV recordings and names should be as following if there are 2 Subs:
 
 - recordings/
-    -- calibM.mkv
-    -- calibS1.mkv
-    -- calibS2.mkv
-    -- sub_folder/
-        --- M.mkv
-        --- S1.mkv
-        --- S2.mkv
-    -- sub_folder2/
-...
+  - calibM.mkv
+  - calibS1.mkv
+    - calibS2.mkv
+    - sub_folder/
+      - M.mkv
+      - S1.mkv
+      - S2.mkv
+    - sub_folder2/
+  - ...
 
 The naming of the sub_folders doesnt matter. The Foldername to generate the pointcloud has to be named in the command with the flag --sub_path 
