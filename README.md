@@ -1,7 +1,7 @@
 # How to start the Repo
-1. Clone the repo
-2. Install MKVToolNix https://mkvtoolnix.download/downloads.html
-3. Create a venv ( python -m venv venv)
+1. Install MKVToolNix https://mkvtoolnix.download/downloads.html. 
+2. Clone the repo
+3. In the root of the repo Create a venv with an cmd command ( python -m venv venv)
 4. Check Restrictions (on Windows --> cmd or powershell: Get-ExecutionPolicy). If they are restricted you have to unrestrict them (cmd: Set-ExecutionPolicy Unrestricted -Scope Process)
 5. Activate venv (cmd: venv/Scripts/activate)
 6. install numpy (cmd: pip install numpy)
