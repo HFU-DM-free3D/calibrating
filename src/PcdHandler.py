@@ -54,7 +54,7 @@ class PcdHandler():
         all_pcds_per_frame = self.combinePointCloudPerFrame(pcds_M, all_sub_pcds_perFrame)
         
         if create_pcd_json:
-            self.createJson(all_pcds_per_frame)
+            self.createJson(all_pcds_per_frame, self.path)
         
         self.visualise(all_pcds_per_frame, loading_amount)
 
@@ -182,7 +182,7 @@ class PcdHandler():
             all_new_transforms.append(transform)
         return all_new_transforms
     
-    def createJson(self, all_pcds_per_frame):
+    def createJson(self, all_pcds_per_frame, path):
         clouds = []
         for pcd in all_pcds_per_frame:
             points_list = np.round(np.asarray(pcd.points),5).tolist()
@@ -198,7 +198,7 @@ class PcdHandler():
         all_Clouds_dict = {"clouds": [cloud.to_dict() for cloud in clouds]}
 
         j = json.dumps(all_Clouds_dict)
-        file_path = "bigOneClouds.json"
+        file_path = path + "bigOneClouds.json"
         print("started to create pcd json, pls wait, this needs maybe minutes...or less...maybe stop if it takes more time than 10 minutes :D")
         with open(file_path, 'w') as f:
             f.write(j)
