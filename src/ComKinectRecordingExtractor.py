@@ -1,5 +1,6 @@
 import os
 import subprocess
+import locale
 
 class ComKinectRecordingExtractor:
     def __init__(self, path, sub_path, kinect_pic_rec_extractor, sub_amount):
@@ -34,15 +35,20 @@ class ComKinectRecordingExtractor:
         calib_mkv_name = ""
         if self.sub_path == "":
             calib_mkv_name = "calib"
+        pic_extractor = self.pic_extractor
+        path = self.path
+
         commands = [] 
-        commandM = "python " + self.pic_extractor + "azure_kinect_mkv_reader.py --input " + self.path + calib_mkv_name + "M.mkv --output " + self.path + "M\\"
+        commandM = f'python "{pic_extractor}azure_kinect_mkv_reader.py" --input "{path}{calib_mkv_name}M.mkv" --output "{path}M/"'
         commands.append(commandM)
         for sub in range(self.sub_amount):
-            commandS = "python " + self.pic_extractor + "azure_kinect_mkv_reader.py --input " + self.path + calib_mkv_name + "S" + str(sub + 1) + ".mkv --output " + self.path + "S" + str(sub + 1) + "\\"
+            commandS = f'python "{pic_extractor}azure_kinect_mkv_reader.py" --input "{path}{calib_mkv_name}S{sub + 1}.mkv" --output "{path}S{sub + 1}/"'
             print(commandS)
             commands.append(commandS)
         
+        preferred_encoding = locale.getpreferredencoding()
+
         for command in commands:
-            result = subprocess.run(command, shell=True, capture_output=True, text=True)
+            result = subprocess.run(command, shell=True, capture_output=True, text=True, encoding=preferred_encoding)
             print("stdout:", result.stdout)
             print("stderr:", result.stderr)

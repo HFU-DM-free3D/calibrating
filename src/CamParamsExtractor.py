@@ -7,6 +7,7 @@
 
 import os
 import subprocess
+import locale
 
 class CamParamsExtractor:
     """
@@ -36,14 +37,19 @@ class CamParamsExtractor:
     
     def createJsonWithToolNix(self):
         commands = []
-        commandM = self.path_to_toolNix + "mkvextract " + self.path + "calibM.mkv attachments 1:" + self.path + "intriM.json"
+        path_to_toolNix = self.path_to_toolNix
+        path = self.path
+        commandM = f'"{path_to_toolNix}mkvextract" "{path}calibM.mkv" attachments 1:"{path}intriM.json"'
         commands.append(commandM)
+
         for sub in range(self.sub_amount):
-            commandS = self.path_to_toolNix + "mkvextract " + self.path + "calibS" + str(sub + 1) + ".mkv attachments 1:" + self.path + "intriS"+ str(sub + 1) +".json"
+            commandS = f'"{path_to_toolNix}mkvextract" "{path}calibS{sub + 1}.mkv" attachments 1:"{path}intriS{sub + 1}.json"'
             print(commandS)
             commands.append(commandS)
-        
+
+        preferred_encoding = locale.getpreferredencoding()
+
         for command in commands:
-            result = subprocess.run(command, shell=True, capture_output=True, text=True)
+            result = subprocess.run(command, shell=True, capture_output=True, text=True, encoding=preferred_encoding)
             print("stdout:", result.stdout)
             print("stderr:", result.stderr)
