@@ -99,4 +99,4 @@ ones_column = np.ones((xyz_coordinates.shape[0], 1))
 init_pcd_stack = np.hstack((xyz_coordinates, colors, ones_column))
 
 init_pcd_np = np.asarray(init_pcd_stack)
-np.savez("", init_pcd_np)#TODO: Set .npz name
+np.savez("", data=init_pcd_np)#TODO: Set .npz name
