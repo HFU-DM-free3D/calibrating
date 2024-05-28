@@ -41,7 +41,7 @@ def poseEstimation():
     cam_param_path = ""
     cam_matrix, dist_coefficients = get_cMtx_and_dist(cam_param_path)
 
-    aruco_dict = cv.aruco.getPredefinedDictionary(cv.aruco.DICT_6X6_1000)
+    aruco_dict = cv.aruco.getPredefinedDictionary(cv.aruco.DICT_6X6_250)
     board_size = (3, 5)
     board = cv.aruco.CharucoBoard(board_size, square_len, marker_len, aruco_dict)
     charuco_detector = cv.aruco.CharucoDetector(board)
@@ -71,6 +71,7 @@ def poseEstimation():
                     flag, rvec, tvec = cv.solvePnP(obj_points, img_points, cam_matrix, dist_coefficients)
                     if flag:
                         cv.drawFrameAxes(image_copy, cam_matrix, dist_coefficients, rvec, tvec, .2)
+                        #print("tvec: ",tvec)
                         R, _ = cv.Rodrigues(rvec)
                         all_tvecs.append(tvec)
                         all_R.append(R)
@@ -88,7 +89,7 @@ def poseEstimation():
 
 def trans_In_Board_Coord(t, R):
     R_Cam = np.transpose(R)
-    t = -(R@t)
+    t = -(R_Cam@t)
     return t, R_Cam
 
 def computeOriginDistance(trans1, trans2):
