@@ -16,11 +16,11 @@ def get_parsed_args():
     parser.add_argument("--sub_path", type=str, default="", help="Folder name of Scene")
     parser.add_argument("--kinect_pic_rec_extractor", default=".\\venv\\Lib\\site-packages\\open3d\\examples\\reconstruction_system\\sensors", type=str)
     parser.add_argument("--icp_itteration", type=int, default=25, help="Amount of ICP Itterations for the Pointcloud Postpro")
-    parser.add_argument("--create_pcd_json", type=bool, default=False, help="Flag if an pcd Json of multiple Frames should be created")
+    parser.add_argument("--create_pcd_json", action='store_true', help="Flag if an pcd Json of multiple Frames should be created")
     parser.add_argument("--amount_pcd_frames", type=int, default=5, help="Amount of Frames which should be saved in pcd json. If --create_pcd is False, this is not necessary.")
-    parser.add_argument("--create_dg_init_npz", type=bool, default=False, help="If you want to create a dynamic Gaussian, you need a init pcd an you should set this to yes")
-    parser.add_argument("--pcd_just_center", type=bool, default=False, help="If the whole set should be shown or just the center")
-    parser.add_argument("--create_npzs", type=bool, default=False, help="If you want to use dynamic gaussian spaltting you may need some npzs...this could become very disc intense (maybe 10GB or more)")
+    parser.add_argument("--create_dg_init_npz", action='store_true', help="If you want to create a dynamic Gaussian, you need a init pcd an you should set this to yes")
+    parser.add_argument("--pcd_just_center", action='store_true', help="If the whole set should be shown or just the center")
+    parser.add_argument("--create_npzs", action='store_true', help="If you want to use dynamic gaussian spaltting you may need some npzs...this could become very disc intense (maybe 10GB or more)")
     return parser.parse_args()
 
 def ensure_trailing_backslash(path):
