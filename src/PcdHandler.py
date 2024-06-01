@@ -5,6 +5,7 @@ import os
 import time
 from typing import List
 from CamExtris import CamExtris
+from NPZCreator import NPZCreator
 
 
 class Pcd():
@@ -31,11 +32,12 @@ class PointCol():
         return {'x': self.r, 'y': self.g, 'z': self.b}
 
 class PcdHandler():
-    def __init__(self, loading_amount, sub_amount, icp_its, just_show_center, path, sub_path, extris: List[CamExtris], create_pcd_json):
+    def __init__(self, loading_amount, sub_amount, icp_its, just_show_center, path, sub_path, extris: List[CamExtris], create_pcd_json, create_pcd_npz):
         self.sub_path = sub_path
         self.path = path + self.sub_path
         self.path = self.ensure_trailing_backslash(self.path)
         self.icp_its = icp_its
+        print("just show center parameter: " + str(just_show_center))
         self.just_show_center = just_show_center
         
         intr_M, height_M, width_M = self.getIntrinsics(self.path + "M/")
@@ -55,6 +57,9 @@ class PcdHandler():
         
         if create_pcd_json:
             self.createJson(all_pcds_per_frame, self.path)
+        
+        if create_pcd_npz:
+            NPZCreator(all_pcds_per_frame, loading_amount, self.path)
         
         self.visualise(all_pcds_per_frame, loading_amount)
 
@@ -138,7 +143,8 @@ class PcdHandler():
         pcd.transform(extrinsic_matrix)
         voxeledDown = pcd
         voxeledDown = pcd.voxel_down_sample(voxel_size=0.01)
-        if self.just_show_center == True:
+        print("just show Center: " + str(self.just_show_center))
+        if self.just_show_center:
             voxeledDown = self.db_Scan(voxeledDown)
             voxeledDown = self.groundless(voxeledDown)
 

@@ -19,7 +19,8 @@ def get_parsed_args():
     parser.add_argument("--create_pcd_json", type=bool, default=False, help="Flag if an pcd Json of multiple Frames should be created")
     parser.add_argument("--amount_pcd_frames", type=int, default=5, help="Amount of Frames which should be saved in pcd json. If --create_pcd is False, this is not necessary.")
     parser.add_argument("--create_dg_init_npz", type=bool, default=False, help="If you want to create a dynamic Gaussian, you need a init pcd an you should set this to yes")
-    parser.add_argument("--pcd_just_center", type=bool, default=True, help="If the whole set should be shown or just the center")
+    parser.add_argument("--pcd_just_center", type=bool, default=False, help="If the whole set should be shown or just the center")
+    parser.add_argument("--create_npzs", type=bool, default=False, help="If you want to use dynamic gaussian spaltting you may need some npzs...this could become very disc intense (maybe 10GB or more)")
     return parser.parse_args()
 
 def ensure_trailing_backslash(path):
@@ -60,6 +61,18 @@ def main():
     ComKinectRecordingExtractor(args.recordings_path, args.sub_path, args.kinect_pic_rec_extractor, args.amount_Subs)
     #PCD creation, postpro and visualisation
     #Open3d will visualise the pcd of whole Scene but the pcd.json will only be the person in the middle
-    PcdHandler(args.amount_pcd_frames, args.amount_Subs, args.icp_itteration, args.pcd_just_center, args.recordings_path, args.sub_path, all_extris, args.create_pcd_json)
+    print("args just show center: " + str(args.pcd_just_center))
+    print("args just show center: " + str(args.create_npzs))
+    PcdHandler(
+         loading_amount=args.amount_pcd_frames, 
+         sub_amount=args.amount_Subs, 
+         icp_its=args.icp_itteration, 
+         just_show_center=args.pcd_just_center, 
+         path=args.recordings_path, 
+         sub_path=args.sub_path, 
+         extris=all_extris, 
+         create_pcd_json=args.create_pcd_json, 
+         create_pcd_npz=args.create_npzs
+         )
 
 main()
