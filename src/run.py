@@ -59,6 +59,7 @@ def get_all_extrinsic_Matrices(recording_path, marker_length, amount_subs, use_c
                 ch_board_size=ch_board_size)
             extr = CamExtris("S"+str(sub + 1), tracker.get_extrinsic_matrix())
             all_extris.append(extr)
+            print("working: " + str(all_extris))
 
         ExtriJsonCreator(all_extris, recording_path)
     else: 

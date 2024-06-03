@@ -6,6 +6,7 @@ import time
 from typing import List
 from CamExtris import CamExtris
 from NPZCreator import NPZCreator
+from ExtriJsonHandlers import ExtriJsonCreator
 
 
 class Pcd():
@@ -32,7 +33,7 @@ class PointCol():
         return {'x': self.r, 'y': self.g, 'z': self.b}
 
 class PcdHandler():
-    def __init__(self, loading_amount, sub_amount, icp_its, just_show_center, path, sub_path, extris: List[CamExtris], create_pcd_json, create_pcd_npz):
+    def __init__(self, loading_amount, sub_amount, icp_its, just_show_center, path, sub_path, extris: list[CamExtris], create_pcd_json, create_pcd_npz):
         self.sub_path = sub_path
         self.path = path + self.sub_path
         self.path = self.ensure_trailing_backslash(self.path)
@@ -50,9 +51,16 @@ class PcdHandler():
             pp_pcd = self.postpro_focus_pcd(extris[sub + 1].extri, self.path + "S" + str(sub + 1) + "/", height_S, width_S, intr_S)
             transform_S = self.icp_algo(pp_pcd, ppM_pcd, self.icp_its)
             new_extri = self.compute_transform(transform_S, extris[sub + 1].extri)
+            extris[sub + 1].extri = new_extri
             pcds_perFrame = self.getPCDs(self.path + "S" + str(sub + 1) + "/", height_S, width_S, intr_S, new_extri, loading_amount)
             all_sub_pcds_perFrame.append(pcds_perFrame)
 
+        
+        for ext in extris:
+            ext.extri = np.array(ext.extri)
+
+        
+        ExtriJsonCreator(extris, self.path)
         all_pcds_per_frame = self.combinePointCloudPerFrame(pcds_M, all_sub_pcds_perFrame)
         
         if create_pcd_json:
