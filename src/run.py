@@ -13,6 +13,7 @@ def get_parsed_args():
     parser.add_argument("--mkvToolNix_path", type=str, help="Path to installed MKVToolNix")
     parser.add_argument("--amount_Subs", type=int, help="e.g. If you have 3 Cams, you have 2 Subs")
     parser.add_argument("--marker_length", type=float, help="length of the Marker...they should be square")
+    parser.add_argument("--use_charuco", action='store_true', help="Flag to set if the calibration Target was a charuco board")
     parser.add_argument("--sub_path", type=str, default="", help="Folder name of Scene")
     parser.add_argument("--kinect_pic_rec_extractor", default=".\\venv\\Lib\\site-packages\\open3d\\examples\\reconstruction_system\\sensors", type=str)
     parser.add_argument("--icp_itteration", type=int, default=25, help="Amount of ICP Itterations for the Pointcloud Postpro")
@@ -28,17 +29,34 @@ def ensure_trailing_backslash(path):
             return path + "\\"
         return path
 
-def get_all_extrinsic_Matrices(recording_path, marker_length, amount_subs):
+def get_all_extrinsic_Matrices(recording_path, marker_length, amount_subs, use_charuco, ch_marker_len = 0.112, ch_square_len = 0.150, ch_dict = 0, ch_board_size=(3,5)):
     all_extris = []
     if not os.path.isfile(recording_path + "extris.json"):
         print("Extrinsic Json doesn't exist. Creating new one")
         all_extris = []
-        trackerM = ExtrinsicCalculator(recording_path, marker_length, "M")
+        trackerM = ExtrinsicCalculator(
+             path=recording_path, 
+             marker_length=marker_length, 
+             cam_role="M", 
+             use_Charuco=use_charuco, 
+             ch_marker_len=ch_marker_len, 
+             ch_square_len=ch_square_len,
+             ch_dict=ch_dict,
+             ch_board_size=ch_board_size
+             )
         extrM = CamExtris("M", trackerM.get_extrinsic_matrix())
         all_extris.append(extrM)
 
         for sub in range(amount_subs):
-            tracker = ExtrinsicCalculator(recording_path, marker_length, "S" + str(sub + 1))
+            tracker = ExtrinsicCalculator(
+                 path=recording_path, 
+                 marker_length=marker_length, 
+                 cam_role="S" + str(sub + 1),
+                 use_Charuco=use_charuco, 
+                 ch_marker_len=ch_marker_len, 
+                 ch_square_len=ch_square_len,
+                 ch_dict=ch_dict,
+                ch_board_size=ch_board_size)
             extr = CamExtris("S"+str(sub + 1), tracker.get_extrinsic_matrix())
             all_extris.append(extr)
 
@@ -56,13 +74,18 @@ def main():
     # Extract Cam Params
     CamParamsExtractor(args.recordings_path, args.mkvToolNix_path, args.amount_Subs)
     # Get Extrinsic Cam-Params
-    all_extris = get_all_extrinsic_Matrices(args.recordings_path, args.marker_length, args.amount_Subs)
+    all_extris = []
+    all_extris = get_all_extrinsic_Matrices(
+         recording_path=args.recordings_path, 
+         marker_length=args.marker_length, 
+         amount_subs=args.amount_Subs, 
+         use_charuco=args.use_charuco)
+    
+    
     # Create rgb and Depth Images
     ComKinectRecordingExtractor(args.recordings_path, args.sub_path, args.kinect_pic_rec_extractor, args.amount_Subs)
     #PCD creation, postpro and visualisation
     #Open3d will visualise the pcd of whole Scene but the pcd.json will only be the person in the middle
-    print("args just show center: " + str(args.pcd_just_center))
-    print("args just show center: " + str(args.create_npzs))
     PcdHandler(
          loading_amount=args.amount_pcd_frames, 
          sub_amount=args.amount_Subs, 

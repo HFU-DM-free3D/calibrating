@@ -143,7 +143,6 @@ class PcdHandler():
         pcd.transform(extrinsic_matrix)
         voxeledDown = pcd
         voxeledDown = pcd.voxel_down_sample(voxel_size=0.01)
-        print("just show Center: " + str(self.just_show_center))
         if self.just_show_center:
             voxeledDown = self.db_Scan(voxeledDown)
             voxeledDown = self.groundless(voxeledDown)
