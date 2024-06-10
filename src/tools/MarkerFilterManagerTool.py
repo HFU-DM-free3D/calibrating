@@ -8,6 +8,8 @@ class TrackedMarker:
         self.translation = translation
         self.depCamInCubeRot = np.array([])
         self.depCamInCubeTrans = np.array([])
+        self.depCamInCubeRot_ocv = np.array([])
+        self.depCamInCubeTrans_ocv = np.array([])
 
 class MarkerOnCube:
     def __init__(self,id, rotation, translation) -> None:
@@ -71,9 +73,65 @@ def markersOnCubeInUnity():
     allMarkers = [marker_1, marker_15, marker_22, marker_30, marker_435]
     return allMarkers
 
+def markersOnCubeInOCV():
+    marker_1_Rotation = np.array( [
+        [0,-1,0],
+        [-1,0,0],
+        [0,0,1]
+    ])
+    marker_1_Translation = np.array([
+        [0],
+        [0],
+       [ 0.5*0.17]])
+    marker_1 = MarkerOnCube(id=1, rotation=marker_1_Rotation, translation=marker_1_Translation)
+    marker_15_Rotation = np.array( [
+        [0,0,1],
+        [-1,0,0],
+        [0,1,0]
+    ])
+    marker_15_Translation = np.array([
+        [0.5*0.17],
+        [0],
+        [0]])
+    marker_15 = MarkerOnCube(id=15, rotation=marker_15_Rotation, translation=marker_15_Translation)
+    marker_22_Rotation = np.array( [
+        [0,-1,0],
+        [1,0,0],
+        [0,0,-1]
+    ])
+    marker_22_Translation = np.array([
+        [0],
+        [0],
+        [-0.5*0.17]])
+    marker_22 = MarkerOnCube(id=22, rotation=marker_22_Rotation, translation=marker_22_Translation)
+    
+    marker_30_Rotation = np.array( [
+        [0,0,-1],
+        [0,-1,0],
+        [1,0,0]
+    ])
+    marker_30_Translation = np.array([
+        [-0.5*0.17],
+        [0],
+        [0]])
+    marker_30 = MarkerOnCube(id=30, rotation=marker_30_Rotation, translation=marker_30_Translation)
+
+    marker_435_Rotation = np.array( [
+        [0,-1,0],
+        [0,0,-1],
+        [-1,0,0]
+    ])
+    marker_435_Translation = np.array([
+        [0],
+        [-0.5*0.17],
+        [0]])
+    marker_435 = MarkerOnCube(id=435, rotation=marker_435_Rotation, translation=marker_435_Translation)
+    allMarkers = [marker_1, marker_15, marker_22, marker_30, marker_435]
+    return allMarkers
+
 all_Markers: MarkerOnCube = markersOnCubeInUnity()
 
-
+all_Markers_ocv: MarkerOnCube = markersOnCubeInOCV()
         
 
 class MarkerFilterManager:
@@ -95,6 +153,7 @@ class MarkerFilterManager:
         
         count_tracked_markers = self.countAmountMarkersWhereTracked(sorted_Markers)
 
+        self.closestToMedian = None
         if count_tracked_markers >= 2:
             self.candidate_1_15_1, self.candidate_1_15_15 = self.giveShortestDistanceFromTwoMarkerArrays(sorted_Markers["id_1_markers"], sorted_Markers["id_15_markers"])
             self.candidate_dist_1_22_1, self.candidate_dist_1_22_22 = self.giveShortestDistanceFromTwoMarkerArrays(sorted_Markers["id_1_markers"], sorted_Markers["id_22_markers"])
@@ -107,28 +166,52 @@ class MarkerFilterManager:
             self.candidate_dist_22_435_22, self.candidate_dist_22_435_435 = self.giveShortestDistanceFromTwoMarkerArrays(sorted_Markers["id_22_markers"], sorted_Markers["id_435_markers"])
             self.candidate_dist_30_435_30, self.candidate_dist_30_435_435 = self.giveShortestDistanceFromTwoMarkerArrays(sorted_Markers["id_30_markers"], sorted_Markers["id_435_markers"])
 
-            print("candidate 1-15-1:", self.candidate_1_15_1.translation, "candidate 1-15-15:", self.candidate_1_15_15.translation)
-            print("candidate 1-22-1:", self.candidate_dist_1_22_1.translation, "candidate 1-22-22:", self.candidate_dist_1_22_22.translation)
-            print("candidate 1-30-1:", self.candidate_dist_1_30_1.translation, "candidate 1-30-30:", self.candidate_dist_1_30_30.translation)
-            print("candidate 1-435-1:", self.candidate_dist_1_435_1.translation, "candidate 1-435-435:", self.candidate_dist_1_435_435.translation)
-            print("candidate 15-22-15:", self.candidate_dist_15_22_15.translation, "candidate 15-22-22:", self.candidate_dist_15_22_22.translation)
-            print("candidate 15-30-15:", self.candidate_dist_15_30_15.translation, "candidate 15-30-30:", self.candidate_dist_15_30_30.translation)
-            print("candidate 15-435-15:", self.candidate_dist_15_435_15.translation, "candidate 15-435-435:", self.candidate_dist_15_435_435.translation)
-            print("candidate 22-30-22:", self.candidate_dist_22_30_22.translation, "candidate 22-30-30:", self.candidate_dist_22_30_30.translation)
-            print("candidate 22-435-22:", self.candidate_dist_22_435_22.translation, "candidate 22-435-435:", self.candidate_dist_22_435_435.translation)
-            print("candidate 30-435-30:", self.candidate_dist_30_435_30.translation, "candidate 30-435-435:", self.candidate_dist_30_435_435.translation)
+            all_candidates = [
+                self.candidate_1_15_1, self.candidate_1_15_15, self.candidate_dist_1_22_1, self.candidate_dist_1_22_22,
+                self.candidate_dist_1_30_1, self.candidate_dist_1_30_30, self.candidate_dist_1_435_1, self.candidate_dist_1_435_435,
+                self.candidate_dist_15_22_15, self.candidate_dist_15_22_22, self.candidate_dist_15_30_15, self.candidate_dist_15_30_30,
+                self.candidate_dist_15_435_15, self.candidate_dist_15_435_435, self.candidate_dist_22_30_22, self.candidate_dist_22_30_30,
+                self.candidate_dist_22_435_22, self.candidate_dist_22_435_435, self.candidate_dist_30_435_30, self.candidate_dist_30_435_435
+            ]
             
-            print("candidate 22-435-30 trans: ", self.candidate_dist_30_435_30.depCamInCubeTrans, "\nrot: ", self.candidate_dist_30_435_30.depCamInCubeRot)
+            translation_array = [marker.translation for marker in all_candidates if marker.translation is not None]
+            medianTrans = np.median(translation_array, axis=0)
+            self.closestToMedian = self.giveShortestDistanceFromMedian(markerArray, medianTrans)
+            print(self.closestToMedian.depCamInCubeRot)
+            print(self.closestToMedian.depCamInCubeRot_ocv)
         else:
             for key, markerArray in sorted_Markers.items():
                 if markerArray != []:
                     translation_array = [marker.translation for marker in markerArray if marker.translation is not None]
                     medianTrans = np.median(translation_array, axis=0)
-                    closestToMedian = self.giveShortestDistanceFromMedian(markerArray, medianTrans)
-                    print("Median :", medianTrans)
-                    print("closest trans:", closestToMedian.depCamInCubeTrans, "\nrot:", closestToMedian.depCamInCubeRot)
+                    self.closestToMedian = self.giveShortestDistanceFromMedian(markerArray, medianTrans)
 
+    def get_o3d_extrinsic_matrix(self):
+        unity_to_o3d_y = np.array([
+            [1,0,0],
+            [0,-1,0],
+            [0,0,1]
+        ])
 
+        unity_to_o3d_x = np.array([
+            [-1,0,0],
+            [0,1,0],
+            [0,0,1]
+        ])
+        o3d_rot = unity_to_o3d_x @ self.closestToMedian.depCamInCubeRot @ unity_to_o3d_y
+        o3d_trans = unity_to_o3d_x @ self.closestToMedian.depCamInCubeTrans
+        transformation_matrix = np.eye(4,4)
+        translation_vector = o3d_trans.flatten()
+        transformation_matrix[0:3, 0:3] = o3d_rot
+        transformation_matrix[0:3, 3] = translation_vector
+        return transformation_matrix
+    
+    def get_ocv_extrinsic_matrix(self):
+        transformation_matrix = np.eye(4,4)
+        translation_vector = self.closestToMedian.depCamInCubeTrans_ocv.flatten()
+        transformation_matrix[0:3, 0:3] = self.closestToMedian.depCamInCubeRot_ocv
+        transformation_matrix[0:3, 3] = translation_vector
+        return transformation_matrix
             
     def countAmountMarkersWhereTracked(self, sorted_Markers):
         count = 0
@@ -164,19 +247,13 @@ class MarkerFilterManager:
          [0, 0, 1]])
         R_in_Unity_Cam = OCV_in_U @ rot
         T_in_Unity_Cam = OCV_in_U @ trans
-        #print("Rotate in Unity Cam: ", R_in_Unity_Cam, "\n transform in unity Cam: ", T_in_Unity_Cam)
         return R_in_Unity_Cam, T_in_Unity_Cam
     
     ###### Transform Camera in Unity Marker
     #OpenCV Coord in Unity Coord
     def fromCamInMarkerKoord(self, rot, trans):
-        OCV_M_in_U = np.array([
-            [-1,  0,  0],
-            [0,  1, 0],
-            [0, 0, 1]])
         RC_in_Marker = np.transpose(rot)
         TC_in_Marker = -RC_in_Marker@trans
-        #print("\nRotate in Unity Marker: ", RC_in_Unity_Marker, "\n transform in unity Marker: ", TC_in_Unity_Marker)
         return RC_in_Marker, TC_in_Marker
     
     #Rotation Computation: CubeRotationInUnityRotation @ MarkerRotationInCubeRotation @ CamRotationInMarkerRotation
@@ -186,6 +263,13 @@ class MarkerFilterManager:
         TC_in_Cube = cubeMarker.originTranslation + (cubeMarker.originRotation @ trans)
         return RC_in_Cube, TC_in_Cube
     
+    def fromMarkerInOCVCubeSystem(self, R, trans, MarkerId):
+        cubeMarker = self.find_marker_by_id(all_Markers_ocv, MarkerId)
+        transp_rot, transp_trans = self.fromCamInMarkerKoord(R, trans)
+        RC_in_Cube = cubeMarker.originRotation @ transp_rot
+        TC_in_Cube = cubeMarker.originTranslation + (cubeMarker.originRotation @ transp_trans)
+        return RC_in_Cube, TC_in_Cube
+    
     def safeAllDependetCamValues(self, id_Marker_Array):
         for id_Marker in id_Marker_Array:
             rot_Unity_Cam_Main, trans_Unity_Cam_Main = self.fromOCVCamInUnityCam(id_Marker.rotation, id_Marker.translation)
@@ -193,6 +277,10 @@ class MarkerFilterManager:
             rot_Unity_Main, trans_Unity_Main = self.fromMarkerInUnityCubeSystem(rot_Marker_Main, trans_Marker_Main, id_Marker.id)
             id_Marker.depCamInCubeRot = rot_Unity_Main
             id_Marker.depCamInCubeTrans = trans_Unity_Main
+
+            rot_ocv, trans_ocv = self.fromMarkerInOCVCubeSystem(id_Marker.rotation, id_Marker.translation, id_Marker.id)
+            id_Marker.depCamInCubeRot_ocv = rot_ocv
+            id_Marker.depCamInCubeTrans_ocv = trans_ocv
             
     def computeOriginDistance(self, trans1, trans2):
         x1 = trans1[0]

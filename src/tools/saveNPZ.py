@@ -3,7 +3,9 @@ import json
 import numpy as np
 import os
 
-loadingAmaount = 1
+loadingAmaount = 298
+path_to_videos = ""
+record_name = "ATLFB"
 
 def getPCDs(pathToFolders, height, width, intrinsic_mat, extrinsic_mat, num_images=301, ):
     pcds = []
@@ -57,32 +59,32 @@ def combinePointCloudPerFrame(pcds_M, pcds_S1, pcds_S2):
 
 
 
-intr_M, height_M, width_M = getIntrinsics("")#set path to intrinsics
+intr_M, height_M, width_M = getIntrinsics(path_to_videos + "M\\")#set path to intrinsics
 extr_M = [
     [-0.9939503, -0.03950024, 0.10248183, -0.14961497],
     [0.02270801,  -0.98683595, -0.16012228, 1.85014322],
     [0.10745762,  -0.15682643,  0.98176287, -3.9282198],
     [0, 0, 0, 1],
 ]
-pcds_M = getPCDs("", height_M, width_M, intr_M, extr_M, loadingAmaount)#set path to Pics
+pcds_M = getPCDs(path_to_videos + "M\\", height_M, width_M, intr_M, extr_M, loadingAmaount)#set path to Pics
 
-intr_S1, height_S1, width_S1 = getIntrinsics("")#set path to intrinsics
+intr_S1, height_S1, width_S1 = getIntrinsics(path_to_videos + "S1\\")#set path to intrinsics
 extr_S1 = [
     [ 0.56199585, -0.29204414,  0.77386749, -2.56310273],
  [ 0.05134139, -0.92147358, -0.38503312,  2.00513958],
  [ 0.82554512,  0.25611844, -0.50287036,  1.73157791],
  [ 0.        ,  0.        ,  0.        ,  1.        ]
 ]
-pcds_S1 = getPCDs("",height_S1, width_S1, intr_S1, extr_S1, loadingAmaount)#set path to Pics
+pcds_S1 = getPCDs(path_to_videos + "S1\\",height_S1, width_S1, intr_S1, extr_S1, loadingAmaount)#set path to Pics
 
-intr_S2, height_S2, width_S2 = getIntrinsics("")#set path to intrinsics
+intr_S2, height_S2, width_S2 = getIntrinsics(path_to_videos + "S2\\")#set path to intrinsics
 extr_S2 = [
     [ 0.55271681,  0.31597125, -0.77114609,  3.69106138],
  [-0.00467293, -0.92414592, -0.38201108,  1.97714511],
  [-0.83335604,  0.21474746, -0.50931448,  0.9125606 ],
  [ 0.        ,  0.        ,  0.        ,  1.        ]
 ]
-pcds_S2 = getPCDs("",height_S2, width_S2, intr_S2, extr_S2, loadingAmaount)#set path to Pics
+pcds_S2 = getPCDs(path_to_videos + "S2\\",height_S2, width_S2, intr_S2, extr_S2, loadingAmaount)#set path to Pics
 
 all_pcds_per_frame = combinePointCloudPerFrame(pcds_M, pcds_S1, pcds_S2)
 pcds_M = None
@@ -91,12 +93,17 @@ pcds_S2 = None
 
 o3d.visualization.draw_geometries([all_pcds_per_frame[0]])
 
-xyz_coordinates = np.asarray(all_pcds_per_frame[0].points)
-colors = np.asarray(all_pcds_per_frame[0].colors)
-ones_column = np.ones((xyz_coordinates.shape[0], 1))
+for i in range(loadingAmaount):
+    print("create npz: ", str(i+1) , " / ", str(loadingAmaount))
+    for point in all_pcds_per_frame[i].points:
+        point *= [-1, -1, 1]
 
-# Concatenate x, y, z coordinates, ones, and colors horizontally
-init_pcd_stack = np.hstack((xyz_coordinates, colors, ones_column))
+    xyz_coordinates = np.asarray(all_pcds_per_frame[i].points)
+    colors = np.asarray(all_pcds_per_frame[i].colors)
+    ones_column = np.ones((xyz_coordinates.shape[0], 1))
 
-init_pcd_np = np.asarray(init_pcd_stack)
-np.savez("", data=init_pcd_np)#TODO: Set .npz name
+    #   Concatenate x, y, z coordinates, ones, and colors horizontally
+    init_pcd_stack = np.hstack((xyz_coordinates, colors, ones_column))
+
+    init_pcd_np = np.asarray(init_pcd_stack)
+    np.savez(path_to_videos + "npzs\\" + record_name + "_" + str(i) + ".npz", data=init_pcd_np)#TODO: Set .npz name

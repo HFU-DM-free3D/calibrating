@@ -1,6 +1,6 @@
 # same as CamToMarker.py, but just with one camera
 import numpy as np
-from MarkerFilterManagerTool import MarkerFilterManager, TrackedMarker
+from MarkerFilterManager import MarkerFilterManager, TrackedMarker
 
 import cv2
 import cv2.aruco as aruco
@@ -15,11 +15,12 @@ axis = np.float32([[1,0,0], [0,1,0], [0,0,-1]]).reshape(-1,3)
 all_Tracked_Markers = []
 path_to_videos = ""
 
+
 # Add the fitting video Path with the videos with the markers
 # Add the fitting json Path from the video (you can extract the json from the video with the command: ffmpeg -dump_attachment:3 calibration2.json -i output-4.mkv)
 
-inputVideo = cv2.VideoCapture(path_to_videos + "calibS2.mkv")
-json_file_path = path_to_videos + "intriS2.json"
+inputVideo = cv2.VideoCapture(path_to_videos + "calibM.mkv")
+json_file_path = path_to_videos + "intriM.json"
 
 # update the Marker Size in Meter. To compute the correkt Position you need to tell the right size of the Marker. If you set this to small the distance will be longer than in reality
 # if its too big the measured Distance will be shorter than in reality
@@ -95,8 +96,12 @@ while inputVideo.isOpened():
             # start from: https://stackoverflow.com/questions/18637494/camera-position-in-world-coordinate-from-cvsolvepnp 24.03.24
             # Convert rvec to rotation matrix R
             R, _ = cv2.Rodrigues(rvec)
+            
+            R_t = np.transpose(R)
+            tvec_t = -R_t @ tvec
 
-            #print("\nid:", ids[i],"\nRotation Mat:", R, "\ntransVec: " , tvec)
+            print("Rotation transposed: ", R_t)
+            print("\nPosition cam: ", tvec_t)
             
             if ids[i] in [1, 15, 22, 30, 435]:all_Tracked_Markers.append(TrackedMarker(ids[i], R, tvec))
             # project 3D points to image plane
@@ -112,9 +117,3 @@ while inputVideo.isOpened():
 
 inputVideo.release()
 cv2.destroyAllWindows()
-
-print(len(all_Tracked_Markers))
-
-mfm = MarkerFilterManager(all_Tracked_Markers)
-print("o3d: ", mfm.get_o3d_extrinsic_matrix())
-print("ocv: ", mfm.get_ocv_extrinsic_matrix())
