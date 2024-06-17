@@ -111,7 +111,7 @@ class ExtrinsicCalculator:
                     tvecs.append(tvec)
                     R, _ = cv2.Rodrigues(rvec)
 
-                    if ids[i] in [1, 15, 22, 30, 435]:self.all_tracked_markers.append(TrackedMarker(ids[i], R, tvec))
+                    if ids[i] in [1, 15, 22, 30, 99, 435]:self.all_tracked_markers.append(TrackedMarker(ids[i], R, tvec))
                     cv2.drawFrameAxes(imageCopy, intri_Mtx, dist, rvec, tvec, self.marker_length) 
 
             # Show Video in window

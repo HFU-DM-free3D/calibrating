@@ -83,7 +83,7 @@ class PcdHandler():
                 color=color_raw, 
                 depth=depth_raw, 
                 depth_scale=1000.0,
-                depth_trunc=7.0, 
+                depth_trunc=4.0, 
                 convert_rgb_to_intensity=False)
         pcd = o3d.geometry.PointCloud.create_from_rgbd_image(rgbd_image, 
                                                              o3d.camera.PinholeCameraIntrinsic(height=height, width=width, intrinsic_matrix=intrinsic_mat))
@@ -102,7 +102,7 @@ class PcdHandler():
                 color=color_raw, 
                 depth=depth_raw, 
                 depth_scale=1000.0,
-                depth_trunc=7.0, 
+                depth_trunc=5.0, 
                 convert_rgb_to_intensity=False)
 
             pcds.append(self.createPC(rgbd_image, height, width, intrinsic_mat, extrinsic_mat))
@@ -153,7 +153,7 @@ class PcdHandler():
         voxeledDown = pcd.voxel_down_sample(voxel_size=0.01)
         if self.just_show_center:
             voxeledDown = self.db_Scan(voxeledDown)
-            voxeledDown = self.groundless(voxeledDown)
+            #voxeledDown = self.groundless(voxeledDown)
 
         return voxeledDown
 
@@ -167,6 +167,7 @@ class PcdHandler():
         return all_pcds_per_Frame
 
     def icp_algo(self, _source, _target, it):
+        print("icp")
         o3d.utility.set_verbosity_level(o3d.utility.VerbosityLevel.Debug)
         source = _source
         source.estimate_normals(search_param=o3d.geometry.KDTreeSearchParamKNN(knn=30), fast_normal_computation=True)
@@ -230,6 +231,7 @@ class PcdHandler():
         geometry = o3d.geometry.PointCloud()
         geometry.points = all_pcds_per_frame[counter].points
         geometry.colors = all_pcds_per_frame[counter].colors
+        vis.get_render_option().background_color = [0, 0, 0]
         vis.add_geometry(geometry)
 
         frame_rate = 30
