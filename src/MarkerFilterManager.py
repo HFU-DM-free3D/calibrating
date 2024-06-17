@@ -58,6 +58,17 @@ def markersOnCubeInUnity():
         [0]])
     marker_30 = MarkerOnCube(id=30, rotation=marker_30_Rotation, translation=marker_30_Translation)
 
+    marker_99_Rotation = np.array( [
+        [0,1,0],
+        [0,0,-1],
+        [1,0,0]
+    ])
+    marker_99_Translation = np.array([
+        [0],
+        [-0.5*0.17],
+        [0]])
+    marker_99 = MarkerOnCube(id=99, rotation=marker_99_Rotation, translation=marker_99_Translation)
+
     marker_435_Rotation = np.array( [
         [0,1,0],
         [0,0,1],
@@ -68,7 +79,7 @@ def markersOnCubeInUnity():
         [0.5*0.17],
         [0]])
     marker_435 = MarkerOnCube(id=435, rotation=marker_435_Rotation, translation=marker_435_Translation)
-    allMarkers = [marker_1, marker_15, marker_22, marker_30, marker_435]
+    allMarkers = [marker_1, marker_15, marker_22, marker_30, marker_99, marker_435]
     return allMarkers
 
 all_Markers: MarkerOnCube = markersOnCubeInUnity()
@@ -81,6 +92,7 @@ class MarkerFilterManager:
             "id_15_markers" : [marker for marker in self.all_Tracked_Markers if marker.id == 15],
             "id_22_markers" : [marker for marker in self.all_Tracked_Markers if marker.id == 22],
             "id_30_markers" : [marker for marker in self.all_Tracked_Markers if marker.id == 30],
+            "id_99_markers" : [marker for marker in self.all_Tracked_Markers if marker.id == 99],
             "id_435_markers" : [marker for marker in self.all_Tracked_Markers if marker.id == 435]
         }
 
@@ -90,25 +102,30 @@ class MarkerFilterManager:
         
         count_tracked_markers = self.countAmountMarkersWhereTracked(sorted_Markers)
         
-        self.closestToMedian = None
+        self.closestToMedian: TrackedMarker
         if count_tracked_markers >= 2:
             self.candidate_1_15_1, self.candidate_1_15_15 = self.giveShortestDistanceFromTwoMarkerArrays(sorted_Markers["id_1_markers"], sorted_Markers["id_15_markers"])
             self.candidate_dist_1_22_1, self.candidate_dist_1_22_22 = self.giveShortestDistanceFromTwoMarkerArrays(sorted_Markers["id_1_markers"], sorted_Markers["id_22_markers"])
             self.candidate_dist_1_30_1, self.candidate_dist_1_30_30 = self.giveShortestDistanceFromTwoMarkerArrays(sorted_Markers["id_1_markers"], sorted_Markers["id_30_markers"])
+            self.candidate_dist_1_99_1, self.candidate_dist_1_99_99 = self.giveShortestDistanceFromTwoMarkerArrays(sorted_Markers["id_1_markers"], sorted_Markers["id_99_markers"])
             self.candidate_dist_1_435_1, self.candidate_dist_1_435_435 = self.giveShortestDistanceFromTwoMarkerArrays(sorted_Markers["id_1_markers"], sorted_Markers["id_435_markers"])
             self.candidate_dist_15_22_15, self.candidate_dist_15_22_22 = self.giveShortestDistanceFromTwoMarkerArrays(sorted_Markers["id_15_markers"], sorted_Markers["id_22_markers"])
             self.candidate_dist_15_30_15, self.candidate_dist_15_30_30 = self.giveShortestDistanceFromTwoMarkerArrays(sorted_Markers["id_15_markers"], sorted_Markers["id_30_markers"])
+            self.candidate_dist_15_99_15, self.candidate_dist_15_99_99 = self.giveShortestDistanceFromTwoMarkerArrays(sorted_Markers["id_15_markers"], sorted_Markers["id_99_markers"])
             self.candidate_dist_15_435_15, self.candidate_dist_15_435_435 = self.giveShortestDistanceFromTwoMarkerArrays(sorted_Markers["id_15_markers"], sorted_Markers["id_435_markers"])
             self.candidate_dist_22_30_22, self.candidate_dist_22_30_30 = self.giveShortestDistanceFromTwoMarkerArrays(sorted_Markers["id_22_markers"], sorted_Markers["id_30_markers"])
+            self.candidate_dist_22_99_22, self.candidate_dist_22_99_99 = self.giveShortestDistanceFromTwoMarkerArrays(sorted_Markers["id_22_markers"], sorted_Markers["id_99_markers"])
             self.candidate_dist_22_435_22, self.candidate_dist_22_435_435 = self.giveShortestDistanceFromTwoMarkerArrays(sorted_Markers["id_22_markers"], sorted_Markers["id_435_markers"])
+            self.candidate_dist_30_99_30, self.candidate_dist_30_99_99 = self.giveShortestDistanceFromTwoMarkerArrays(sorted_Markers["id_30_markers"], sorted_Markers["id_99_markers"])
             self.candidate_dist_30_435_30, self.candidate_dist_30_435_435 = self.giveShortestDistanceFromTwoMarkerArrays(sorted_Markers["id_30_markers"], sorted_Markers["id_435_markers"])
+            self.candidate_dist_99_435_99, self.candidate_dist_99_435_435 = self.giveShortestDistanceFromTwoMarkerArrays(sorted_Markers["id_99_markers"], sorted_Markers["id_435_markers"])
 
             all_candidates = [
                 self.candidate_1_15_1, self.candidate_1_15_15, self.candidate_dist_1_22_1, self.candidate_dist_1_22_22,
-                self.candidate_dist_1_30_1, self.candidate_dist_1_30_30, self.candidate_dist_1_435_1, self.candidate_dist_1_435_435,
-                self.candidate_dist_15_22_15, self.candidate_dist_15_22_22, self.candidate_dist_15_30_15, self.candidate_dist_15_30_30,
-                self.candidate_dist_15_435_15, self.candidate_dist_15_435_435, self.candidate_dist_22_30_22, self.candidate_dist_22_30_30,
-                self.candidate_dist_22_435_22, self.candidate_dist_22_435_435, self.candidate_dist_30_435_30, self.candidate_dist_30_435_435
+                self.candidate_dist_1_30_1, self.candidate_dist_1_30_30, self.candidate_dist_1_99_1, self.candidate_dist_1_99_99, self.candidate_dist_1_435_1, self.candidate_dist_1_435_435,
+                self.candidate_dist_15_22_15, self.candidate_dist_15_22_22, self.candidate_dist_15_30_15, self.candidate_dist_15_30_30, self.candidate_dist_15_99_15, self.candidate_dist_15_99_99,
+                self.candidate_dist_15_435_15, self.candidate_dist_15_435_435, self.candidate_dist_22_30_22, self.candidate_dist_22_30_30, self.candidate_dist_22_99_22, self.candidate_dist_22_99_99,
+                self.candidate_dist_22_435_22, self.candidate_dist_22_435_435, self.candidate_dist_30_435_30, self.candidate_dist_30_99_30, self.candidate_dist_30_99_99, self.candidate_dist_30_435_435, self.candidate_dist_99_435_99, self.candidate_dist_99_435_435
             ]
             
             translation_array = [marker.translation for marker in all_candidates if marker.translation is not None]
@@ -202,8 +219,11 @@ class MarkerFilterManager:
             rot_Unity_Cam_Main, trans_Unity_Cam_Main = self.fromOCVCamInUnityCam(id_Marker.rotation, id_Marker.translation)
             rot_Marker_Main, trans_Marker_Main = self.fromCamInMarkerKoord(rot_Unity_Cam_Main, trans_Unity_Cam_Main)
             rot_Unity_Main, trans_Unity_Main = self.fromMarkerInUnityCubeSystem(rot_Marker_Main, trans_Marker_Main, id_Marker.id)
+            
             id_Marker.depCamInCubeRot = rot_Unity_Main
             id_Marker.depCamInCubeTrans = trans_Unity_Main
+            print(id_Marker.id)
+            print(id_Marker.depCamInCubeRot)
             
     def computeOriginDistance(self, trans1, trans2):
         x1 = trans1[0]
