@@ -1,9 +1,10 @@
 import numpy as np
 import math
+from typing import List, Dict
 
 class TrackedMarker:
     def __init__(self, id=None, rotation=None, translation=None) -> None:
-        self.id = id
+        self.id: int = id
         self.rotation = rotation
         self.translation = translation
         self.depCamInCubeRot = np.array([])
@@ -85,9 +86,9 @@ def markersOnCubeInUnity():
 all_Markers: MarkerOnCube = markersOnCubeInUnity()
 
 class MarkerFilterManager:
-    def __init__(self, all_Tracked_Markers) -> None:
+    def __init__(self, all_Tracked_Markers: List[TrackedMarker]) -> None:
         self.all_Tracked_Markers = all_Tracked_Markers
-        sorted_Markers = {
+        sorted_Markers: Dict[str, List[TrackedMarker]] = {
             "id_1_markers" : [marker for marker in self.all_Tracked_Markers if marker.id == 1],
             "id_15_markers" : [marker for marker in self.all_Tracked_Markers if marker.id == 15],
             "id_22_markers" : [marker for marker in self.all_Tracked_Markers if marker.id == 22],
@@ -129,8 +130,9 @@ class MarkerFilterManager:
             ]
             
             translation_array = [marker.translation for marker in all_candidates if marker.translation is not None]
+            marker_array = [marker for marker in all_candidates if marker.translation is not None]
             medianTrans = np.median(translation_array, axis=0)
-            self.closestToMedian = self.giveShortestDistanceFromMedian(markerArray, medianTrans)
+            self.closestToMedian = self.giveShortestDistanceFromMedian(marker_array, medianTrans)
         else:
             for key, markerArray in sorted_Markers.items():
                 if markerArray != []:
@@ -158,14 +160,14 @@ class MarkerFilterManager:
         transformation_matrix[0:3, 3] = translation_vector
         return transformation_matrix
             
-    def countAmountMarkersWhereTracked(self, sorted_Markers):
+    def countAmountMarkersWhereTracked(self, sorted_Markers: Dict[str, List[TrackedMarker]]):
         count = 0
         for key, markerArray in sorted_Markers.items():
             if markerArray != []: count = count+1
         return count
 
-    def filteredMarkers(self, array):
-        filtered_markers = []
+    def filteredMarkers(self, array: List[TrackedMarker]):
+        filtered_markers: List[TrackedMarker] = []
         for i in range(len(array)):
             # Assume no duplicates initially
             duplicate = False
@@ -209,12 +211,12 @@ class MarkerFilterManager:
     
     #Rotation Computation: CubeRotationInUnityRotation @ MarkerRotationInCubeRotation @ CamRotationInMarkerRotation
     def fromMarkerInUnityCubeSystem(self, R, trans, MarkerId):
-        cubeMarker = self.find_marker_by_id(all_Markers, MarkerId)
+        cubeMarker: MarkerOnCube = self.find_marker_by_id(all_Markers, MarkerId)
         RC_in_Cube = cubeMarker.originRotation @ R
         TC_in_Cube = cubeMarker.originTranslation + (cubeMarker.originRotation @ trans)
         return RC_in_Cube, TC_in_Cube
     
-    def safeAllDependetCamValues(self, id_Marker_Array):
+    def safeAllDependetCamValues(self, id_Marker_Array: List[TrackedMarker]):
         for id_Marker in id_Marker_Array:
             rot_Unity_Cam_Main, trans_Unity_Cam_Main = self.fromOCVCamInUnityCam(id_Marker.rotation, id_Marker.translation)
             rot_Marker_Main, trans_Marker_Main = self.fromCamInMarkerKoord(rot_Unity_Cam_Main, trans_Unity_Cam_Main)
@@ -235,7 +237,7 @@ class MarkerFilterManager:
         distance = math.sqrt((x2 - x1)**2 + (y2 - y1)**2 + (z2 - z1)**2)
         return distance
 
-    def giveShortestDistanceFromTwoMarkerArrays(self, array1, array2):
+    def giveShortestDistanceFromTwoMarkerArrays(self, array1: List[TrackedMarker], array2: List[TrackedMarker]):
         if len(array1) > 0 and len(array2) > 0:
             shortest1 = None
             shortest2 = None
@@ -263,7 +265,7 @@ class MarkerFilterManager:
             #One of the Arrays is empty
             return TrackedMarker(), TrackedMarker()
         
-    def giveShortestDistanceFromMedian(self, array, median):
+    def giveShortestDistanceFromMedian(self, array: List[TrackedMarker], median):
         candidate = None
         shortest_dist = float('inf')
         for marker in array:

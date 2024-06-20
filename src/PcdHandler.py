@@ -64,7 +64,7 @@ class PcdHandler():
         all_pcds_per_frame = self.combinePointCloudPerFrame(pcds_M, all_sub_pcds_perFrame)
         
         if create_pcd_json:
-            self.createJson(all_pcds_per_frame, self.path)
+            self.createJson(all_pcds_per_frame, self.path, self.sub_path)
         
         if create_pcd_npz:
             NPZCreator(all_pcds_per_frame, loading_amount, self.path)
@@ -83,7 +83,7 @@ class PcdHandler():
                 color=color_raw, 
                 depth=depth_raw, 
                 depth_scale=1000.0,
-                depth_trunc=4.0, 
+                depth_trunc=10.0, 
                 convert_rgb_to_intensity=False)
         pcd = o3d.geometry.PointCloud.create_from_rgbd_image(rgbd_image, 
                                                              o3d.camera.PinholeCameraIntrinsic(height=height, width=width, intrinsic_matrix=intrinsic_mat))
@@ -102,7 +102,7 @@ class PcdHandler():
                 color=color_raw, 
                 depth=depth_raw, 
                 depth_scale=1000.0,
-                depth_trunc=5.0, 
+                depth_trunc=2.0, 
                 convert_rgb_to_intensity=False)
 
             pcds.append(self.createPC(rgbd_image, height, width, intrinsic_mat, extrinsic_mat))
@@ -153,7 +153,7 @@ class PcdHandler():
         voxeledDown = pcd.voxel_down_sample(voxel_size=0.01)
         if self.just_show_center:
             voxeledDown = self.db_Scan(voxeledDown)
-            #voxeledDown = self.groundless(voxeledDown)
+            voxeledDown = self.groundless(voxeledDown)
 
         return voxeledDown
 
@@ -196,7 +196,7 @@ class PcdHandler():
             all_new_transforms.append(transform)
         return all_new_transforms
     
-    def createJson(self, all_pcds_per_frame, path):
+    def createJson(self, all_pcds_per_frame, path, sub_path):
         clouds = []
         for pcd in all_pcds_per_frame:
             points_list = np.round(np.asarray(pcd.points),5).tolist()
@@ -212,7 +212,7 @@ class PcdHandler():
         all_Clouds_dict = {"clouds": [cloud.to_dict() for cloud in clouds]}
 
         j = json.dumps(all_Clouds_dict)
-        file_path = path + "bigOneClouds.json"
+        file_path = path + sub_path + ".json"
         print("started to create pcd json, pls wait, this needs maybe minutes...or less...maybe stop if it takes more time than 10 minutes :D")
         with open(file_path, 'w') as f:
             f.write(j)
