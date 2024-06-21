@@ -99,8 +99,6 @@ center = np.array([0, 0, 0], dtype=np.float64).reshape(3, 1)
 mesh = o3d.io.read_triangle_mesh("C:/Users/Lukas/Downloads/scene (4)/scene (4).obj")
 mesh.transform(extr_M_my)
 mesh.scale(scale=17, center=m1_trans)
-#mesh.rotate(rotate_M)
-#mesh.translate(translate_M)
 
 path_to_npz = "F:/Studium/Master/Semester_3/Forsch/Recordings/a2_aufteilung/standing1/aruco/simon1/npzs/ATLFB_1.npz"
 pcd_data = np.load(path_to_npz)["data"]
@@ -110,4 +108,23 @@ pcd.colors = o3d.utility.Vector3dVector(pcd_data[:, 3:6])
 pcd.rotate(rotate_M)
 
 # Visualize the mesh
-o3d.visualization.draw_geometries([mesh, mesh_frame_m, mesh_frame_s1, mesh_frame_s2, pcd])
+def custom_draw_geometry_with_rotation(mesh, mesh_frame_m, mesh_frame_s1, mesh_frame_s2, pcd):
+    counter = 0
+    def rotate_view(vis):
+        nonlocal counter 
+        counter += 1
+        ctr = vis.get_view_control()
+        ctr.rotate(5.0, 0.0)
+        vis.capture_screen_image("C:/Users/Lukas/Desktop/testCaptures/" + str(counter) + ".png", do_render=False)
+        return False
+    
+    vis = o3d.visualization.Visualizer()
+    vis.create_window()
+    vis.add_geometry(pcd)
+    vis.add_geometry(mesh)
+    vis.register_animation_callback(rotate_view)
+    
+    vis.run()
+    vis.destroy_window()
+
+custom_draw_geometry_with_rotation(mesh, mesh_frame_m, mesh_frame_s1, mesh_frame_s2, pcd)
