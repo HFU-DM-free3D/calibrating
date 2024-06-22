@@ -44,3 +44,7 @@ The naming of the sub_folders doesnt matter. The Foldername to generate the poin
 
 ## About
 This repository is created in conjunction with the Free3D project at the Faculty of DM, Hochschule Furtwangen. Its purpose is to calibrate three Kinect cameras.
+
+## Use as WebSocket connected instance
+9. override the step 9 from above and install websockets via ```pip install websockets```
+10. install pyee via ```pip install pyee```
