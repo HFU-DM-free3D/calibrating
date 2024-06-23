@@ -46,5 +46,21 @@ The naming of the sub_folders doesnt matter. The Foldername to generate the poin
 This repository is created in conjunction with the Free3D project at the Faculty of DM, Hochschule Furtwangen. Its purpose is to calibrate three Kinect cameras.
 
 ## Use as WebSocket connected instance
-9. override the step 9 from above and install websockets via ```pip install websockets```
+9. instead of step 9 above, install the following: ```pip install websockets```
 10. install pyee via ```pip install pyee```
+11. read chapter Configuration
+12. run the __init__.py script: ```python .\src\__init__.py```
+
+## Configuration
+Open the file `__init__.py` and adjust the following variables in lines 115-117:
+
+```python
+recordingPath = "" #[your own path e.g. C:\Users\User\Desktop\Videos]
+toolKitPath = "" #[your own path e.g. D:\MKVToolNix]
+kinectPicRecExtractor = "" #.\\venv\\Lib\\site-packages\\open3d\\examples\\reconstruction_system\\sensors
+ ```
+
+ in line 15 change the following:
+ ```python
+webSocketAdress = "" #[ip-address, where the websocket is hosted]
+  ```

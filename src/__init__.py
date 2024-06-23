@@ -151,8 +151,6 @@ class Calibrator:
         
         await websocket.send(CreateStateUpdate("Finished"))
 
-        # await websocket.send(CreateStateUpdate("Finished"))
-
 
 
 async def connect_to_server():
@@ -161,20 +159,17 @@ async def connect_to_server():
     url: str = f"ws://{webSocketAdress}:{webSocketPort}"
     async with websockets.connect(url) as websocket:
         async def OnTriggerCalibration(body:object):
+
             subCount = body["SubCount"]
             markerLength = body["MarkerLength"]
             subPath= body["SubPath"]
             createPCDJSON = body["CreateJSON"]
 
             useCharuco = body["UseCharuco"]
-            # kinectPicRecExtractor = body.KinectPicRecExtractor
             icpItteration = body["IcpItteration"]
             amountPcdFrames = body["AmountPcdFrames"]
-            # createDgInitNpz = body.CreateDgInitNpz
             pcdJustCenter = body["PcdJustCenter"]
             createNpzs = body["CreateNpzs"]
-
-            # print(subCount,markerLength,subPath,createPCDJSON,useCharuco,icpItteration,amountPcdFrames,pcdJustCenter,createNpzs)
 
             await calibrator.main(websocket=websocket,subCount=subCount,markerLength=markerLength,subPath=subPath,createPCDJSON=createPCDJSON,useCharuco=useCharuco,icpItteration=icpItteration,amountPcdFrames=amountPcdFrames,pcdJustCenter=pcdJustCenter,createNpzs=createNpzs)
 
@@ -194,7 +189,7 @@ async def connect_to_server():
             print(event)
             print(data)
 
-            await calibrationHooks.DispatchHook(hook=event,body=data)
+            asyncio.create_task(calibrationHooks.DispatchHook(hook=event,body=data))
 
             
 
