@@ -48,10 +48,10 @@ This repository is created in conjunction with the Free3D project at the Faculty
 ## Use as WebSocket connected instance
 9. instead of step 9 above, install the following: ```pip install websockets```
 10. install pyee via ```pip install pyee```
-11. read chapter Configuration
+11. read chapter [Confirguration](#Confirguration)
 12. run the __init__.py script: ```python .\src\__init__.py```
 
-## Configuration
+## [Configuration](Configuration)
 Open the file `__init__.py` and adjust the following variables in lines 115-117:
 
 ```python
