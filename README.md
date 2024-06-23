@@ -25,26 +25,6 @@ This project centers on calibrating three Kinect cameras for Free3D, employing A
 8. install open3d (``pip install open3d``)
 9. run the run.py Script e.g. with a command to extract a pcd Json (``python src/run.py --recordings_path [your own path e.g. C:\Users\User\Desktop\Videos] --mkvToolNix_path [your own path e.g. D:\MKVToolNix] --amount_Subs 2 --marker_length 0.15 --sub_path ATLFB --create_pcd_json True``)
 
-### Info
-The structure of the MKV recordings and names should be as following if there are 2 Subs:
-
-- recordings/
-  - calibM.mkv
-  - calibS1.mkv
-  - calibS2.mkv
-  - sub_folder/
-    - M.mkv
-    - S1.mkv
-    - S2.mkv
-  - sub_folder2/
-    - ...
-  - ...
-
-The naming of the sub_folders doesnt matter. The Foldername to generate the pointcloud has to be named in the command with the flag --sub_path 
-
-## About
-This repository is created in conjunction with the Free3D project at the Faculty of DM, Hochschule Furtwangen. Its purpose is to calibrate three Kinect cameras.
-
 ## Use as WebSocket connected instance
 9. instead of step 9 above, install the following: ```pip install websockets```
 10. install pyee via ```pip install pyee```
@@ -64,3 +44,23 @@ kinectPicRecExtractor = "" #.\\venv\\Lib\\site-packages\\open3d\\examples\\recon
  ```python
 webSocketAdress = "" #[ip-address, where the websocket is hosted]
   ```
+
+### Info
+The structure of the MKV recordings and names should be as following if there are 2 Subs:
+
+- recordings/
+  - calibM.mkv
+  - calibS1.mkv
+  - calibS2.mkv
+  - sub_folder/
+    - M.mkv
+    - S1.mkv
+    - S2.mkv
+  - sub_folder2/
+    - ...
+  - ...
+
+The naming of the sub_folders doesnt matter. The Foldername to generate the pointcloud has to be named in the command with the flag --sub_path 
+
+## About
+This repository is created in conjunction with the Free3D project at the Faculty of DM, Hochschule Furtwangen. Its purpose is to calibrate three Kinect cameras.
