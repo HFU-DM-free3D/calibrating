@@ -1,6 +1,6 @@
 import asyncio
 import websockets
-from pyee import EventEmitter
+from pyee import AsyncIOEventEmitter
 import json
 import argparse
 import os
@@ -14,20 +14,13 @@ from PcdHandler import PcdHandler
 
 webSocketAdress: str = "192.168.178.34"
 webSocketPort: str = "8080"
-recordingPath: str = ""
-toolKitPath: str = ""
 
 
 
-
-
-
-
-
-class WebSocketHooks(EventEmitter):
+class WebSocketHooks(AsyncIOEventEmitter):
     NEW_CONNECTION = "NEW_CONNECTION"
 
-    def DispatchHook(self, hook, body):
+    async def DispatchHook(self, hook, body):
         self.emit(hook, body)
 
     def SubscribeHookListener(self, hook, listener):
@@ -66,7 +59,7 @@ class Calibrator:
         #  # parser.add_argument("--create_pcd_json", action='store_true', help="Flag if an pcd Json of multiple Frames should be created")
 
         parser.add_argument("--use_charuco", action='store_true', help="Flag to set if the calibration Target was a charuco board")
-        parser.add_argument("--kinect_pic_rec_extractor", default=".\\venv\\Lib\\site-packages\\open3d\\examples\\reconstruction_system\\sensors", type=str)
+        # parser.add_argument("--kinect_pic_rec_extractor", default=".\\venv\\Lib\\site-packages\\open3d\\examples\\reconstruction_system\\sensors", type=str)
         parser.add_argument("--icp_itteration", type=int, default=25, help="Amount of ICP Itterations for the Pointcloud Postpro")
         parser.add_argument("--amount_pcd_frames", type=int, default=5, help="Amount of Frames which should be saved in pcd json. If --create_pcd is False, this is not necessary.")
         parser.add_argument("--create_dg_init_npz", action='store_true', help="If you want to create a dynamic Gaussian, you need a init pcd an you should set this to yes")
@@ -118,9 +111,10 @@ class Calibrator:
             all_extris = extri_loader.get_all_extris()
         return all_extris
 
-    async def main(self,websocket ,subCount,markerLength,subPath,createPCDJSON,useCharuco, kinectPicRecExtractor,icpItteration,amountPcdFrames,createDgInitNpz,pcdJustCenter,createNpzs):
-
-
+    async def main(self,websocket ,subCount,markerLength,subPath,createPCDJSON,useCharuco,icpItteration,amountPcdFrames,pcdJustCenter,createNpzs,createDgInitNpz=False ):
+        recordingPath = "C:\\Users\\nicka\\Desktop\\Test"
+        toolKitPath = "C:\\Program Files\\MKVToolNix"
+        kinectPicRecExtractor =".\\venv\\Lib\\site-packages\\open3d\\examples\\reconstruction_system\\sensors"
 
         await websocket.send(CreateStateUpdate("Calibrating"))
 
@@ -166,23 +160,23 @@ async def connect_to_server():
     calibrator = Calibrator()
     url: str = f"ws://{webSocketAdress}:{webSocketPort}"
     async with websockets.connect(url) as websocket:
-        def OnTriggerCalibration(body:object):
-            print(body)
-            subCount = body.SubCount
-            markerLength = body.MarkerLength
-            subPath= body.SubPath
-            createPCDJSON = body.CreateJSON
-            useCharuco = body.UseCharuco
-            kinectPicRecExtractor = body.KinectPicRecExtractor
-            icpItteration = body.IcpItteration
-            amountPcdFrames = body.AmountPcdFrames
-            createDgInitNpz = body.CreateDgInitNpz
-            pcdJustCenter = body.PcdJustCenter
-            createNpzs = body.CreateNpzs
+        async def OnTriggerCalibration(body:object):
+            subCount = body["SubCount"]
+            markerLength = body["MarkerLength"]
+            subPath= body["SubPath"]
+            createPCDJSON = body["CreateJSON"]
 
+            useCharuco = body["UseCharuco"]
+            # kinectPicRecExtractor = body.KinectPicRecExtractor
+            icpItteration = body["IcpItteration"]
+            amountPcdFrames = body["AmountPcdFrames"]
+            # createDgInitNpz = body.CreateDgInitNpz
+            pcdJustCenter = body["PcdJustCenter"]
+            createNpzs = body["CreateNpzs"]
 
-            calibrator.main(websocket=websocket,subCount=subCount,markerLength=markerLength,subPath=subPath,createPCDJSON=createPCDJSON,useCharuco=useCharuco,kinectPicRecExtractor=kinectPicRecExtractor,icpItteration=icpItteration,amountPcdFrames=amountPcdFrames,createDgInitNpz=createDgInitNpz,pcdJustCenter=pcdJustCenter,createNpzs=createNpzs)
-        # await websocket.send("Hello, server!")
+            # print(subCount,markerLength,subPath,createPCDJSON,useCharuco,icpItteration,amountPcdFrames,pcdJustCenter,createNpzs)
+
+            await calibrator.main(websocket=websocket,subCount=subCount,markerLength=markerLength,subPath=subPath,createPCDJSON=createPCDJSON,useCharuco=useCharuco,icpItteration=icpItteration,amountPcdFrames=amountPcdFrames,pcdJustCenter=pcdJustCenter,createNpzs=createNpzs)
 
         calibrationHooks.SubscribeHookListener(hook="ON_TRIGGER_CALIBRATION",listener=OnTriggerCalibration)
 
@@ -194,15 +188,13 @@ async def connect_to_server():
             
             body = json.loads(response)
 
-            print(f"{body}")
-
             event = body.get("eventName", "")
             data = body.get("data", {})
 
             print(event)
             print(data)
 
-            calibrationHooks.DispatchHook(hook=event,body=data)
+            await calibrationHooks.DispatchHook(hook=event,body=data)
 
             
 
