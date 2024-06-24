@@ -10,6 +10,7 @@ from CamExtris import CamExtris
 from ExtriJsonHandlers import ExtriJsonCreator, ExtriJsonLoader
 from ComKinectRecordingExtractor import ComKinectRecordingExtractor
 from PcdHandler import PcdHandler
+import time
 
 
 webSocketAdress: str = "192.168.178.34"
@@ -150,6 +151,10 @@ class Calibrator:
             )
         
         await websocket.send(CreateStateUpdate("Finished"))
+
+        time.sleep(2)
+
+        await websocket.send(CreateStateUpdate("Idle"))
 
 
 
