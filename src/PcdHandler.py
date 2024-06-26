@@ -87,6 +87,7 @@ class PcdHandler():
                 convert_rgb_to_intensity=False)
         pcd = o3d.geometry.PointCloud.create_from_rgbd_image(rgbd_image, 
                                                              o3d.camera.PinholeCameraIntrinsic(height=height, width=width, intrinsic_matrix=intrinsic_mat))
+        
         pcd.transform(extrinsic_mat)
         return pcd
 
@@ -102,7 +103,7 @@ class PcdHandler():
                 color=color_raw, 
                 depth=depth_raw, 
                 depth_scale=1000.0,
-                depth_trunc=2.0, 
+                depth_trunc=5.0, 
                 convert_rgb_to_intensity=False)
 
             pcds.append(self.createPC(rgbd_image, height, width, intrinsic_mat, extrinsic_mat))
@@ -150,7 +151,7 @@ class PcdHandler():
         # Flip it, otherwise the pointcloud will be upside down
         pcd.transform(extrinsic_matrix)
         voxeledDown = pcd
-        voxeledDown = pcd.voxel_down_sample(voxel_size=0.01)
+        voxeledDown = pcd.voxel_down_sample(voxel_size=0.02)
         if self.just_show_center:
             voxeledDown = self.db_Scan(voxeledDown)
             voxeledDown = self.groundless(voxeledDown)
@@ -198,7 +199,11 @@ class PcdHandler():
     
     def createJson(self, all_pcds_per_frame, path, sub_path):
         clouds = []
+        
+        count = 0
         for pcd in all_pcds_per_frame:
+            count += 1
+            print("pcd in json: ", count)
             points_list = np.round(np.asarray(pcd.points),5).tolist()
             points_list_class = [PointPos(x, y, z) for x, y, z in points_list]
             points_dict_list = [point.to_dict() for point in points_list_class]
@@ -210,14 +215,15 @@ class PcdHandler():
             newPcd = None
 
         all_Clouds_dict = {"clouds": [cloud.to_dict() for cloud in clouds]}
-
+        print("started to create pcd json, pls wait, this needs maybe minutes...or less...maybe stop if it takes more time than 10 minutes :D")
         j = json.dumps(all_Clouds_dict)
         file_path = path + sub_path + ".json"
-        print("started to create pcd json, pls wait, this needs maybe minutes...or less...maybe stop if it takes more time than 10 minutes :D")
+        
         with open(file_path, 'w') as f:
             f.write(j)
 
     def visualise(self, all_pcds_per_frame, loading_amount):
+        print("hi there")
         o3d.utility.set_verbosity_level(o3d.utility.VerbosityLevel.Debug)
         vis = o3d.visualization.Visualizer()
         vis.create_window()
