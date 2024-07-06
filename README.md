@@ -20,7 +20,7 @@ This project centers on calibrating three Kinect cameras for Free3D, employing A
 3. In the root of the repo Create a venv with an cmd command ```python -m venv .venv``` 
 4. Check Restrictions (on Windows --> cmd or powershell: ```Get-ExecutionPolicy```). If they are restricted you have to unrestrict them (```Set-ExecutionPolicy Unrestricted -Scope Process```)
 5. Activate venv (```.venv/Scripts/activate```)
-6. install numpy (```pip install numpy```)
+6. install numpy (```pip install numpy==1.26.4```)
 7. install opencv ( ``pip install opencv-contrib-python``)
 8. install open3d (``pip install open3d``)
 9. run the run.py Script e.g. with a command to extract a pcd Json (``python src/run.py --recordings_path [your own path e.g. C:\Users\User\Desktop\Videos] --mkvToolNix_path [your own path e.g. D:\MKVToolNix] --amount_Subs 2 --marker_length 0.15 --sub_path ATLFB --create_pcd_json True``)
