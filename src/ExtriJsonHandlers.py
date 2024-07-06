@@ -1,6 +1,6 @@
 import json
 from typing import List
-from CamExtris import CamExtris
+from calibrating.src.CamExtris import CamExtris
 
 class ExtriJsonCreator:
     def __init__(self, all_extris: list[CamExtris], path):

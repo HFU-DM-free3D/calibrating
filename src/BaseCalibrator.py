@@ -1,20 +1,36 @@
 import os
-from CamParamsExtractor import CamParamsExtractor
-from ExtrinsicCalculator import ExtrinsicCalculator
-from CamExtris import CamExtris
-from ExtriJsonHandlers import ExtriJsonCreator, ExtriJsonLoader
-from ComKinectRecordingExtractor import ComKinectRecordingExtractor
-from PcdHandler import PcdHandler
+from calibrating.src.CamParamsExtractor import CamParamsExtractor
+from calibrating.src.ExtrinsicCalculator import ExtrinsicCalculator
+from calibrating.src.CamExtris import CamExtris
+from calibrating.src.ExtriJsonHandlers import ExtriJsonCreator, ExtriJsonLoader
+from calibrating.src.ComKinectRecordingExtractor import ComKinectRecordingExtractor
+from calibrating.src.PcdHandler import PcdHandler
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 import time
 
+@dataclass
+class Proxy:
+    recordings_path: str
+    mkvToolNix_path: str
+    kinect_pic_rec_extractor: str
+    create_dg_init_npz: str
+    amount_Subs: int
+    marker_length: float
+    sub_path: str
+    create_pcd_json: str
+    use_charuco: bool
+    icp_itteration: int
+    amount_pcd_frames: int
+    pcd_just_center: bool
+    create_npzs: bool
 
 class BaseCalibrator(ABC):
     def __init__(self) -> None:
         print("init BaseCalibrator")
 
     @abstractmethod
-    def GetProxy(self, baseProxy):
+    def GetProxy(self, baseProxy) -> Proxy:
         pass
 
     @abstractmethod
@@ -69,7 +85,7 @@ class BaseCalibrator(ABC):
 
         await self.SetStatus("Calibrating")
 
-        args = self.GetProxy(baseProxy=baseProxy)
+        args:Proxy = self.GetProxy(baseProxy=baseProxy)
         args.recordings_path = self.ensure_trailing_backslash(args.recordings_path)
         args.mkvToolNix_path = self.ensure_trailing_backslash(args.mkvToolNix_path)
         # Extract Cam Params

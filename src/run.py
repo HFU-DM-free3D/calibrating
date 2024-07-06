@@ -1,6 +1,6 @@
 import argparse
 import asyncio
-from BaseCalibrator import BaseCalibrator
+from calibrating.src.BaseCalibrator import BaseCalibrator, Proxy
 
 
 class ScriptCalibrator(BaseCalibrator):
@@ -23,7 +23,26 @@ class ScriptCalibrator(BaseCalibrator):
         parser.add_argument("--create_dg_init_npz", action='store_true', help="If you want to create a dynamic Gaussian, you need a init pcd an you should set this to yes")
         parser.add_argument("--pcd_just_center", action='store_true', help="If the whole set should be shown or just the center")
         parser.add_argument("--create_npzs", action='store_true', help="If you want to use dynamic gaussian spaltting you may need some npzs...this could become very disc intense (maybe 10GB or more)")
-        return parser.parse_args()
+        
+        args = parser.parse_args()
+    
+        proxy = Proxy(
+            recordings_path=args.recordings_path,
+            mkvToolNix_path=args.mkvToolNix_path,
+            kinect_pic_rec_extractor=args.kinect_pic_rec_extractor,
+            create_dg_init_npz= args.create_dg_init_npz,
+            amount_Subs=args.amount_Subs,
+            marker_length=args.marker_length,
+            sub_path=args.sub_path,
+            create_pcd_json= args.create_pcd_json,
+            use_charuco=args.use_charuco,
+            icp_itteration=args.icp_itteration,
+            amount_pcd_frames=args.amount_pcd_frames,
+            pcd_just_center=args.pcd_just_center,
+            create_npzs=args.create_npzs
+        )
+
+        return proxy
     
 
 scriptCalibrator: ScriptCalibrator = ScriptCalibrator()
