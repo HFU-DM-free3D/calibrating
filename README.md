@@ -25,25 +25,6 @@ This project centers on calibrating three Kinect cameras for Free3D, employing A
 8. install open3d (``pip install open3d``)
 9. run the run.py Script e.g. with a command to extract a pcd Json (``python src/run.py --recordings_path [your own path e.g. C:\Users\User\Desktop\Videos] --mkvToolNix_path [your own path e.g. D:\MKVToolNix] --amount_Subs 2 --marker_length 0.15 --sub_path ATLFB --create_pcd_json True``)
 
-## Use as WebSocket connected instance
-9. instead of step 9 above, install the following: ```pip install websockets```
-10. install pyee via ```pip install pyee```
-11. read chapter [Confirguration](#Confirguration)
-12. run the __init__.py script: ```python .\src\__init__.py```
-
-## [Configuration](Configuration)
-Open the file `__init__.py` and adjust the following variables in lines 115-117:
-
-```python
-recordingPath = "" #[your own path e.g. C:\Users\User\Desktop\Videos]
-toolKitPath = "" #[your own path e.g. D:\MKVToolNix]
-kinectPicRecExtractor = "" #.\\venv\\Lib\\site-packages\\open3d\\examples\\reconstruction_system\\sensors
- ```
-
- in line 15 change the following:
- ```python
-webSocketAdress = "" #[ip-address, where the websocket is hosted]
-  ```
 
 ### Info
 The structure of the MKV recordings and names should be as following if there are 2 Subs:
