@@ -1,6 +1,6 @@
 import argparse
 import asyncio
-from calibrating.src.BaseCalibrator import BaseCalibrator, Proxy
+from BaseCalibrator import BaseCalibrator, Proxy
 
 
 class ScriptCalibrator(BaseCalibrator):

@@ -5,7 +5,7 @@ import sys
 import math
 import numpy as np
 import json
-from calibrating.src.MarkerFilterManager import MarkerFilterManager, TrackedMarker
+from MarkerFilterManager import MarkerFilterManager, TrackedMarker
 
 
 class ExtrinsicCalculator:

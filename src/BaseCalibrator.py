@@ -1,10 +1,10 @@
 import os
-from calibrating.src.CamParamsExtractor import CamParamsExtractor
-from calibrating.src.ExtrinsicCalculator import ExtrinsicCalculator
-from calibrating.src.CamExtris import CamExtris
-from calibrating.src.ExtriJsonHandlers import ExtriJsonCreator, ExtriJsonLoader
-from calibrating.src.ComKinectRecordingExtractor import ComKinectRecordingExtractor
-from calibrating.src.PcdHandler import PcdHandler
+from CamParamsExtractor import CamParamsExtractor
+from ExtrinsicCalculator import ExtrinsicCalculator
+from CamExtris import CamExtris
+from ExtriJsonHandlers import ExtriJsonCreator, ExtriJsonLoader
+from ComKinectRecordingExtractor import ComKinectRecordingExtractor
+from PcdHandler import PcdHandler
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 import time
