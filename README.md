@@ -15,6 +15,7 @@ This project centers on calibrating three Kinect cameras for Free3D, employing A
 - Nvidia GTX 1670Ti
 
 ## How to start the Repository
+Please switch to the ["local-usage"](https://github.com/HFU-DM-free3D/calibrating/tree/local-usage) branch. The code on this branch only works in combination with the [network connection](https://github.com/HFU-DM-free3D/RecorderOperator).
 1. Install MKVToolNix https://mkvtoolnix.download/downloads.html. 
 2. Clone the repository
 3. In the root of the repository create a venv with an cmd command ```python -m venv .venv``` 
