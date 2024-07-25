@@ -1,0 +1,6 @@
+# Changing Aruco Object
+This document is intended to help you use new Aruco objects with the code and to show you what needs to be changed.
+
+Currently the orientation matrices and position vectors are in the function “markersOnCubeInUnity”. This is a function which can be found in the “MarkerFilterManager” file. The matrices and vectors are stored in the Unity coordinate system. This is because the data was originally supposed to be transferred to Unity earlier. Through the development of the project, however, this has evolved into Open3D. Due to time pressure and a lack of developers, this was never changed at that time. If you want to use a different calibration object than we did with the Aruco cube, you will need to make changes here.
+
+If you use a charuco poster you don't have to worry about this. you just have to use the right charuco marker library and adjust the sizes of this marker in the code. (get_all_extrinsic_Matrices in the run.py and charuco_marker_Tracking in the ExtrinsicCalculator.py)
