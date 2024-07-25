@@ -14,6 +14,9 @@ This project centers on calibrating three Kinect cameras for Free3D, employing A
 - Windows 11
 - Nvidia GTX 1670Ti
 
+## Informations about our dataset
+You can find informations about our dataset in here: [UseTestData](./docs/UseTestData.md)
+
 ## How to start the Repo
 1. Install MKVToolNix https://mkvtoolnix.download/downloads.html. 
 2. Clone the repo
@@ -25,6 +28,9 @@ This project centers on calibrating three Kinect cameras for Free3D, employing A
 8. install open3d (``pip install open3d``)
 9. run the run.py Script e.g. with a command to extract a pcd Json (``python src/run.py --recordings_path [your own path e.g. C:\Users\User\Desktop\Videos] --mkvToolNix_path [your own path e.g. D:\MKVToolNix] --amount_Subs 2 --marker_length 0.15 --sub_path ATLFB --create_pcd_json True``)
 
+
+## Informations about the calibration object
+If you want to change the calibration object, you can refer to this: [ChangeCalibrationObject](./docs/ChangeCalibrationObject.md) 
 
 ### Info
 The structure of the MKV recordings and names should be as following if there are 2 Subs:
